@@ -6,12 +6,12 @@ import (
 )
 
 func main() {
-	svr := http.NewServeMux()
+	mux := http.NewServeMux()
 
-	svr.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello there!")
 	})
 
 	fmt.Println("starting server on localhost at port 3000...")
-	http.ListenAndServe(":3000", svr)
+	http.ListenAndServe(":3000", mux)
 }
