@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -12,6 +14,14 @@ func main() {
 		fmt.Fprintf(w, "Hello there!")
 	})
 
-	fmt.Println("starting server on localhost at port 3000...")
-	http.ListenAndServe(":3000", mux)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+		log.Printf("defaulting to port %s", port)
+	}
+
+	log.Printf("starting server on localhost at port %s...", port)
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
+		log.Fatal(err)
+	}
 }
