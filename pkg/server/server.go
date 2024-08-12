@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -38,12 +39,18 @@ func New(port string) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) Start() {
+func (s *Server) Start(ctx context.Context) {
 	log.Printf("starting server on localhost at port %s...", s.addr)
 
 	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatal(err)
 	}
+}
+
+func (s *Server) Shutdown(ctx context.Context) error {
+	log.Printf("Shuttingdown server at address %s", s.addr)
+
+	return s.server.Shutdown(ctx)
 }
 
 func (s *Server) mount() {

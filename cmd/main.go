@@ -1,18 +1,18 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/fugu-chop/blog/pkg/server"
 )
 
 func main() {
-	// mux := http.NewServeMux()
-
-	// mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-	// 	fmt.Fprintf(w, "Hello there!")
-	// })
+	ctx := context.Background()
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -25,5 +25,16 @@ func main() {
 		log.Fatalf("could not start server: %v", err)
 	}
 
-	svr.Start()
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+
+	go svr.Start(ctx)
+
+	<-signals
+	ctx, cancel := context.WithTimeout(ctx, time.Second)
+	defer cancel()
+
+	if err := svr.Shutdown(ctx); err != nil {
+		log.Printf("HTTP shutdown: %v", err)
+	}
 }
