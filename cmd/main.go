@@ -1,18 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 	"os"
+
+	"github.com/fugu-chop/blog/pkg/server"
 )
 
 func main() {
-	mux := http.NewServeMux()
+	// mux := http.NewServeMux()
 
-	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello there!")
-	})
+	// mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
+	// 	fmt.Fprintf(w, "Hello there!")
+	// })
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -20,8 +20,10 @@ func main() {
 		log.Printf("defaulting to port %s", port)
 	}
 
-	log.Printf("starting server on localhost at port %s...", port)
-	if err := http.ListenAndServe(":"+port, mux); err != nil {
-		log.Fatal(err)
+	svr, err := server.New(port)
+	if err != nil {
+		log.Fatalf("could not start server: %v", err)
 	}
+
+	svr.Start()
 }
