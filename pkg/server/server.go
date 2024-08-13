@@ -48,7 +48,7 @@ func (s *Server) Start(ctx context.Context) {
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
-	log.Printf("Shuttingdown server at address %s", s.addr)
+	log.Printf("Shutting down server at address %s", s.addr)
 
 	return s.server.Shutdown(ctx)
 }
@@ -60,4 +60,7 @@ func (s *Server) mount() {
 		log.Printf("%s: %s route invoked", r.Method, r.URL)
 		fmt.Fprintf(w, "Hello there!")
 	})
+
+	// make sure to register cookies only for admin page for posting blog
+	// use gorilla/csrf to generate csrf token middleware
 }
