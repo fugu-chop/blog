@@ -31,7 +31,7 @@ func main() {
 	go svr.Start(ctx)
 
 	<-signals
-	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
 
 	if err := svr.Shutdown(ctx); err != nil {

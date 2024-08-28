@@ -29,7 +29,10 @@ func New(port string) (*Server, error) {
 	}
 
 	s := &Server{
-		addr:   port,
+		addr: port,
+		// Expose the Mux on the server as the Handler type on the
+		// server doesn't implement the HandleFunc or Handle interfaces
+		// i.e. we cannot register routes on the Handler type
 		Mux:    mux,
 		server: server,
 	}
@@ -63,4 +66,5 @@ func (s *Server) mount() {
 
 	// make sure to register cookies only for admin page for posting blog
 	// use gorilla/csrf to generate csrf token middleware
+	// Store user in context to minimise db queries
 }
