@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fugu-chop/blog/pkg/server"
+	"github.com/fugu-chop/blog/internal/server"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 		log.Printf("defaulting to port %s", port)
 	}
 
-	svr, err := server.New(port)
+	svr, err := server.New(ctx, port)
 	if err != nil {
 		log.Fatalf("could not start server: %v", err)
 	}

@@ -15,7 +15,7 @@ type Server struct {
 	server *http.Server
 }
 
-func New(port string) (*Server, error) {
+func New(ctx context.Context, port string) (*Server, error) {
 	port = ":" + port
 	mux := http.NewServeMux()
 
@@ -42,12 +42,14 @@ func New(port string) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) Start(ctx context.Context) {
+func (s *Server) Start(ctx context.Context) error {
 	log.Printf("starting server on localhost at port %s...", s.addr)
 
 	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Fatal(err)
+		panic(err)
 	}
+
+	return nil
 }
 
 func (s *Server) Shutdown(ctx context.Context) error {
