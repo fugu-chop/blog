@@ -62,11 +62,37 @@ func (s *Server) mount() {
 	log.Print("registering routes on server")
 
 	s.Mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		// move this to middleware
 		log.Printf("%s: %s route invoked", r.Method, r.URL)
 		fmt.Fprintf(w, "Hello there!")
 	})
 
+	s.Mux.HandleFunc("GET /about", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "I am Dean")
+	})
+
+	s.Mux.HandleFunc("GET /blog", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "This is my blog")
+	})
+
+	s.Mux.HandleFunc("GET /signin", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Welcome to sign in page")
+	})
+
+	s.Mux.HandleFunc("POST /signin", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Signed In")
+	})
+
+	s.Mux.HandleFunc("POST /signout", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Signed Out")
+	})
+
+	s.Mux.HandleFunc("POST /post", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Posted an article")
+	})
+
 	// make sure to register cookies only for admin page for posting blog
 	// use gorilla/csrf to generate csrf token middleware
+	// Add sessions to headers
 	// Store user in context to minimise db queries
 }
