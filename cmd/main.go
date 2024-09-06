@@ -1,17 +1,40 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"context"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/fugu-chop/blog/internal/server"
 )
 
 func main() {
-	mux := http.NewServeMux()
+	ctx := context.Background()
 
-	mux.HandleFunc("GET /{$}", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello there!")
-	})
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3000"
+		log.Printf("defaulting to port %s", port)
+	}
 
-	fmt.Println("starting server on localhost at port 3000...")
-	http.ListenAndServe(":3000", mux)
+	svr, err := server.New(ctx, port)
+	if err != nil {
+		log.Fatalf("could not start server: %v", err)
+	}
+
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, syscall.SIGTERM, syscall.SIGINT)
+
+	go svr.Start(ctx)
+
+	<-signals
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	if err := svr.Shutdown(ctx); err != nil {
+		log.Printf("HTTP shutdown: %v", err)
+	}
 }
