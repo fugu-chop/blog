@@ -7,17 +7,20 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 type Server struct {
-	Mux    *http.ServeMux
+	Mux    *chi.Mux
 	addr   string
 	server *http.Server
 }
 
 func New(ctx context.Context, port string) (*Server, error) {
 	port = ":" + port
-	mux := http.NewServeMux()
+	mux := chi.NewRouter()
 
 	server := &http.Server{
 		Addr:              port,
@@ -29,10 +32,7 @@ func New(ctx context.Context, port string) (*Server, error) {
 	}
 
 	s := &Server{
-		addr: port,
-		// Expose the Mux on the server as the Handler type on the
-		// server doesn't implement the HandleFunc or Handle interfaces
-		// i.e. we cannot register routes on the Handler type
+		addr:   port,
 		Mux:    mux,
 		server: server,
 	}
@@ -61,33 +61,30 @@ func (s *Server) Shutdown(ctx context.Context) error {
 func (s *Server) mount() {
 	log.Print("registering routes on server")
 
-	s.Mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		// move this to middleware
-		log.Printf("%s: %s route invoked", r.Method, r.URL)
+	s.Mux.Use(middleware.RequestID)
+	s.Mux.Use(middleware.RealIP)
+	s.Mux.Use(middleware.Logger)
+	s.Mux.Use(middleware.Recoverer)
+
+	s.Mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Hello there!")
 	})
-
-	s.Mux.HandleFunc("GET /about", func(w http.ResponseWriter, r *http.Request) {
+	s.Mux.Get("/about", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "I am Dean")
 	})
-
-	s.Mux.HandleFunc("GET /blog", func(w http.ResponseWriter, r *http.Request) {
+	s.Mux.Get("/blog", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "This is my blog")
 	})
-
-	s.Mux.HandleFunc("GET /signin", func(w http.ResponseWriter, r *http.Request) {
+	s.Mux.Get("/signin", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Welcome to sign in page")
 	})
-
-	s.Mux.HandleFunc("POST /signin", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Signed In")
+	s.Mux.Post("/signin", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Signed in")
 	})
-
-	s.Mux.HandleFunc("POST /signout", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Signed Out")
+	s.Mux.Post("/signout", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Signed out")
 	})
-
-	s.Mux.HandleFunc("POST /post", func(w http.ResponseWriter, r *http.Request) {
+	s.Mux.Post("/post", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Posted an article")
 	})
 
