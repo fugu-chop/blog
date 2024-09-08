@@ -10,8 +10,8 @@ import (
 
 	"github.com/fugu-chop/blog/pkg/config"
 	"github.com/fugu-chop/blog/pkg/controllers"
+	"github.com/fugu-chop/blog/pkg/templates"
 	"github.com/fugu-chop/blog/pkg/views"
-	"github.com/fugu-chop/blog/pkg/views/templates"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

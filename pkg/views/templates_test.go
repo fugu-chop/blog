@@ -5,7 +5,7 @@ import (
 	"io/fs"
 	"testing"
 
-	"github.com/fugu-chop/blog/pkg/views/templates"
+	"github.com/fugu-chop/blog/pkg/templates"
 	"github.com/stretchr/testify/assert"
 )
 
