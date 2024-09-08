@@ -8,6 +8,10 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/fugu-chop/blog/pkg/config"
+	"github.com/fugu-chop/blog/pkg/views"
+	"github.com/fugu-chop/blog/pkg/views/templates"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -66,8 +70,16 @@ func (s *Server) mount() {
 	s.Mux.Use(middleware.Logger)
 	s.Mux.Use(middleware.Recoverer)
 
+	// Ensure template can be parsed before attempting to use
+	homeTpl := views.Must(views.ParseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
+
 	s.Mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello there!")
+		// move to controller for better abstraction
+		if err := homeTpl.Execute(w, nil); err != nil {
+			s.Mux.NotFound(func(w http.ResponseWriter, r *http.Request) {
+				http.Error(w, "Page not found", http.StatusNotFound)
+			})
+		}
 	})
 	s.Mux.Get("/about", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "I am Dean")

@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fugu-chop/blog/internal/server"
+	"github.com/fugu-chop/blog/pkg/server"
 	"github.com/joho/godotenv"
 )
 
