@@ -10,8 +10,6 @@ import (
 )
 
 func TestMust(t *testing.T) {
-	t.Parallel()
-
 	tests := []struct {
 		name       string
 		inputError error
@@ -41,8 +39,6 @@ func TestMust(t *testing.T) {
 }
 
 func TestParseFS(t *testing.T) {
-	t.Parallel()
-
 	tpl, err := ParseFS(templates.FS, "layout.gohtml", "home.gohtml")
 
 	assert.Nil(t, err)
@@ -50,8 +46,6 @@ func TestParseFS(t *testing.T) {
 }
 
 func TestParseFS_Errors(t *testing.T) {
-	t.Parallel()
-
 	tests := []struct {
 		name       string
 		fileSystem fs.FS

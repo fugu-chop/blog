@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/fugu-chop/blog/pkg/config"
+	"github.com/fugu-chop/blog/pkg/controllers"
 	"github.com/fugu-chop/blog/pkg/views"
 	"github.com/fugu-chop/blog/pkg/views/templates"
 
@@ -72,10 +73,8 @@ func (s *Server) mount() {
 
 	// Ensure template can be before attempting to use
 	homeTpl := views.Must(views.ParseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
+	s.Mux.Get("/", controllers.StaticHandler(homeTpl))
 
-	s.Mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		homeTpl.Execute(w, r, nil)
-	})
 	s.Mux.Get("/about", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "I am Dean")
 	})
