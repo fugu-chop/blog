@@ -70,16 +70,11 @@ func (s *Server) mount() {
 	s.Mux.Use(middleware.Logger)
 	s.Mux.Use(middleware.Recoverer)
 
-	// Ensure template can be parsed before attempting to use
+	// Ensure template can be before attempting to use
 	homeTpl := views.Must(views.ParseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
 
 	s.Mux.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		// move to controller for better abstraction
-		if err := homeTpl.Execute(w, nil); err != nil {
-			s.Mux.NotFound(func(w http.ResponseWriter, r *http.Request) {
-				http.Error(w, "Page not found", http.StatusNotFound)
-			})
-		}
+		homeTpl.Execute(w, r, nil)
 	})
 	s.Mux.Get("/about", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "I am Dean")
