@@ -49,7 +49,7 @@ I would need to use DynamoDB (noSQL) due to it's 'free' status. I prefer Postgre
 Just the sheer amount of stuff to manage:
 - I have to use an application load balancer and likely Route53 just to use a custom domain for the ECS cluster (instead of using another provider like Cloudflare).
 
-- Images for Fargate tasks have to be stored ECR (AFAICT)
+- Images for Fargate tasks have to be stored in ECR (AFAICT)
 
 - Usage of ALB and Route53 to have a custom domain for the app.
 
@@ -59,8 +59,20 @@ Whilst almost all of these products would be free for my use case on the AWS fre
 
 Also, AWS documentation quality is inconsistent. Sometimes it's a bit shit, quite frankly.
 
+#### Why fly.io?
+
+1. Deployment is significantly easier. Everything is through the CLI and connecting VMs is just easy.
+
+2. Documentation is well written and seems to cover things I would want to do.
+
+3. Product offering. I need a virtual machine for my app and one for Postgres. fly.io offers this (the Postgres offering is not managed, but that is fine).
+
+4. Still cheap! It should cost me about $7 a month (app will be in a US region, using a single Postgres node cluster).
+
 ### Future Enhancements
 
 1. Get a nice CI/CD pipeline going. I'm keen to get more exposure to Github Actions, so keen to implement these as part of deployments.
 
-2. Creating a nice-ish frontend. I don't particularly enjoy styling or visual design. But that might be because I am bad at both. It's a useful skill to have.
+2. Try deploy it to AWS. That will be an infra challenge all by itself.
+
+3. Creating a nice-ish frontend. I don't particularly enjoy styling or visual design. But that might be because I am bad at both. It's a useful skill to have.
