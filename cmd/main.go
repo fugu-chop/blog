@@ -8,11 +8,16 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fugu-chop/blog/internal/server"
+	"github.com/fugu-chop/blog/pkg/server"
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	ctx := context.Background()
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("could not load env file: %v", err)
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
