@@ -95,27 +95,16 @@ func (s *Server) mount() {
 	s.Mux.Use(middleware.Logger)
 	s.Mux.Use(middleware.Recoverer)
 
-	// Ensure template can be before attempting to use
+	// Ensure template can be parsed before attempting to use
 	homeTpl := views.Must(views.ParseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
 	s.Mux.Get("/", controllers.StaticHandler(homeTpl))
 
 	s.Mux.Get("/about", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "I am Dean")
 	})
+
 	s.Mux.Get("/blog", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "This is my blog")
-	})
-	s.Mux.Get("/signin", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Welcome to sign in page")
-	})
-	s.Mux.Post("/signin", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Signed in")
-	})
-	s.Mux.Post("/signout", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Signed out")
-	})
-	s.Mux.Post("/post", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Posted an article")
+		fmt.Fprintf(w, "Coming Soon")
 	})
 
 	// make sure to register cookies only for admin page for posting blog
