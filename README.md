@@ -35,28 +35,32 @@ I've settled on using [`chi`](https://github.com/go-chi/chi), which offers a muc
 
 ### Cloud Architecture
 
-After looking through the various providers, I've decided to go with AWS, because:
+After initially looking at AWS, I've decided to go with `fly.io` for simplicity.
 
-1. They are probably the most widely used cloud provider, so having skills there will help
+#### Why not AWS?
+While AWS is very widely used, it seems like it has a bunch of different products that need to be set up and coordinated (i.e. there is just a lot of set up and coordination required).
 
-2. I don't get to use AWS in my day job (we're a GCP shop)
+I had originally decided to use a Fargate task as a serverless setup for the app.
 
-3. It's going to be _relatively_ cheap. DynamoDB is basically free at my intended level of usage, and Fargate isn't too expensive either. ECR is like 10c per month.
+However, there's a bunch of _stuff_ and/or tradeoffs that needs to be made for the app:
 
-4. (Sort of) Fits the use case. 
+I would need to use DynamoDB (noSQL) due to it's 'free' status. I prefer Postgres (relational) because it still suits the blog use case and is easier for me to work with. Using AWS would require me to use a managed service (which is _very_ expensive) or spin up a virtual machine that runs a Postgres docker image. Hassle.
 
-In terms of cloud products:
+Just the sheer amount of stuff to manage:
+- I have to use an application load balancer and likely Route53 just to use a custom domain for the ECS cluster (instead of using another provider like Cloudflare).
 
-1. I'm going to be using S3 to host my resume. Nothing too controversial here.
+- Images for Fargate tasks have to be stored ECR (AFAICT)
 
-2. Use Fargate pulling images from ECR. I'm going to Dockerise the application. I'll get some exposure with ECS as well. While I want to get exposure to AWS products, I think manually configuring an EC2 instance is probably something for the future.
+- Usage of ALB and Route53 to have a custom domain for the app.
 
-3. Ideally I'd like to use a relational database (like RDS) but that is _expensive_. So I'll use a non-relational database in the interest of cost.
+- AWS Certificate Manager for SSL/TLS certificates
+
+Whilst almost all of these products would be free for my use case on the AWS free tier, having to use and 'synchronise' all these products creates monitoring and management hassle.
+
+Also, AWS documentation quality is inconsistent. Sometimes it's a bit shit, quite frankly.
 
 ### Future Enhancements
 
 1. Get a nice CI/CD pipeline going. I'm keen to get more exposure to Github Actions, so keen to implement these as part of deployments.
 
-2. Use Infrastructure as Code. I am unashamedly going to click-ops my way through everything initially. But that is fraught with danger and unpleasantness (having to navigate AWS' UI). I'll get some nice experience with Terraform.
-
-3. Creating a nice-ish frontend. I don't particularly enjoy styling or visual design. But that might be because I am bad at both. It's a useful skill to have.
+2. Creating a nice-ish frontend. I don't particularly enjoy styling or visual design. But that might be because I am bad at both. It's a useful skill to have.
