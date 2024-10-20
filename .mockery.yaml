@@ -1,0 +1,14 @@
+quiet: false
+with-expecter: true
+disable-version-string: true
+all: true
+mockname: "Mock{{.InterfaceName}}"
+filename: "{{.InterfaceNameSnake}}.go"
+keeptree: false
+packages:
+  github.com/fugu-chop/blog/pkg/views:
+    config:
+      dir: "./test/pkg/templatetest"
+      outpkg: "templatetest"
+    interfaces:
+      TemplateCloner:
