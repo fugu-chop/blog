@@ -10,6 +10,10 @@ import (
 	"net/http"
 )
 
+type Executer interface {
+	Execute(http.ResponseWriter, *http.Request, any)
+}
+
 /*
 TemplateCloner extracts the Clone() method on the html/template.Template type
 to an interface.
@@ -35,7 +39,7 @@ Internally it clones the underlying *template.Template type to which it is attac
 helps avoid concurrency issues where a template is being used across different web requests
 (different goroutines).
 */
-func (t *Template) Execute(w http.ResponseWriter, r *http.Request, data any) {
+func (t Template) Execute(w http.ResponseWriter, r *http.Request, data any) {
 	// Cloning ensures we don't end up sharing a template across goroutines
 	// This can avoid issues with CSRF tokens overwritten between different
 	// requests as each request is a different goroutine
