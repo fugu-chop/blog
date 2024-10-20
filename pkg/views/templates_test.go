@@ -20,6 +20,7 @@ func TestGenerateTemplate(t *testing.T) {
 	template := GenerateTemplate("home.gohtml")
 
 	assert.NotNil(t, template)
+	assert.IsType(t, Template{}, template)
 }
 
 func TestGenerateTemplate_Error(t *testing.T) {
