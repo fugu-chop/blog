@@ -36,8 +36,8 @@ type Template struct {
 }
 
 /*
-GenerateTemplate takes in a slice of strings which represent gohtml template files
-and calls various helper methods.
+GenerateTemplate takes in an arbitrary number of strings which represent gohtml
+template files and calls various helper methods.
 
 It parses the validity of the template before returning a Template type (an invalid
 template will cause a panic).

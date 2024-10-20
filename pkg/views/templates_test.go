@@ -14,6 +14,18 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestGenerateTemplate(t *testing.T) {
+	assert.NotPanics(t, func() { GenerateTemplate("home.gohtml") })
+
+	template := GenerateTemplate("home.gohtml")
+
+	assert.NotNil(t, template)
+}
+
+func TestGenerateTemplate_Error(t *testing.T) {
+	assert.Panics(t, func() { GenerateTemplate("non-existent-template.gohtml") })
+}
+
 func TestExecute(t *testing.T) {
 	template := must(parseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
 
