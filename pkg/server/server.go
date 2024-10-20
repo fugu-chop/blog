@@ -93,16 +93,16 @@ func (s *Server) mount() {
 	s.Mux.Use(middleware.Recoverer)
 
 	// Ensure template can be parsed before attempting to use
-	homeTpl := views.GenerateTemplate("home.gohtml")
+	homeTpl := views.GenerateTemplate("root/home.gohtml")
 	s.Mux.Get("/", controllers.StaticHandler(homeTpl))
 
-	aboutTpl := views.GenerateTemplate("about.gohtml")
+	aboutTpl := views.GenerateTemplate("root/about.gohtml")
 	s.Mux.Get("/about", controllers.StaticHandler(aboutTpl))
 
-	blogTpl := views.GenerateTemplate("blog.gohtml")
+	blogTpl := views.GenerateTemplate("root/blog.gohtml")
 	s.Mux.Get("/blog", controllers.StaticHandler(blogTpl))
 
-	projectsTpl := views.GenerateTemplate("projects.gohtml")
+	projectsTpl := views.GenerateTemplate("root/projects.gohtml")
 	s.Mux.Get("/projects", controllers.StaticHandler(projectsTpl))
 
 	// make sure to register cookies only for admin page for posting blog
