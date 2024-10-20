@@ -14,8 +14,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// TODO: Write a test for Execute - you'll need to spin up a httptest server
-
 func TestExecute(t *testing.T) {
 	template := Must(ParseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
 
