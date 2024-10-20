@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/fugu-chop/blog/pkg/views"
+	"github.com/fugu-chop/blog/internal/views"
 )
 
 /*

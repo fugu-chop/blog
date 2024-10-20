@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/fugu-chop/blog/pkg/config"
-	"github.com/fugu-chop/blog/pkg/templates"
+	"github.com/fugu-chop/blog/internal/config"
+	"github.com/fugu-chop/blog/internal/templates"
 	"github.com/fugu-chop/blog/test/pkg/templatetest"
 	"github.com/stretchr/testify/assert"
 )

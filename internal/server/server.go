@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fugu-chop/blog/pkg/controllers"
-	"github.com/fugu-chop/blog/pkg/views"
+	"github.com/fugu-chop/blog/internal/controllers"
+	"github.com/fugu-chop/blog/internal/views"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

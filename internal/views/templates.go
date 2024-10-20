@@ -8,9 +8,10 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"path/filepath"
 
-	"github.com/fugu-chop/blog/pkg/config"
-	"github.com/fugu-chop/blog/pkg/templates"
+	"github.com/fugu-chop/blog/internal/config"
+	"github.com/fugu-chop/blog/internal/templates"
 )
 
 type Executer interface {
@@ -83,7 +84,11 @@ Templates are passed to the `patterns` parameter and applied in the
 order they are passed. This enables use of templating within .gohtml templates.
 */
 func parseFS(fs fs.FS, patterns ...string) (Template, error) {
-	tpl, err := template.ParseFS(fs, patterns...)
+	// Note that the html/template package does not include the
+	// path in a template name - we use the base filepath
+	// to fix this for nesting templates within folders
+	tpl := template.New(filepath.Base(patterns[len(patterns)-1]))
+	tpl, err := tpl.ParseFS(fs, patterns...)
 	if err != nil {
 		return Template{}, fmt.Errorf("parsing template: %w", err)
 	}
