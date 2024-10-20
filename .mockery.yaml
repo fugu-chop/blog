@@ -12,3 +12,4 @@ packages:
       outpkg: "templatetest"
     interfaces:
       TemplateCloner:
+      Executer:
