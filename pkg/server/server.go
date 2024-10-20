@@ -3,14 +3,11 @@ package server
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/fugu-chop/blog/pkg/config"
 	"github.com/fugu-chop/blog/pkg/controllers"
-	"github.com/fugu-chop/blog/pkg/templates"
 	"github.com/fugu-chop/blog/pkg/views"
 
 	"github.com/go-chi/chi/v5"
@@ -96,16 +93,17 @@ func (s *Server) mount() {
 	s.Mux.Use(middleware.Recoverer)
 
 	// Ensure template can be parsed before attempting to use
-	homeTpl := views.Must(views.ParseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
+	homeTpl := views.GenerateTemplate("home.gohtml")
 	s.Mux.Get("/", controllers.StaticHandler(homeTpl))
 
-	s.Mux.Get("/about", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "I am Dean")
-	})
+	aboutTpl := views.GenerateTemplate("about.gohtml")
+	s.Mux.Get("/about", controllers.StaticHandler(aboutTpl))
 
-	s.Mux.Get("/blog", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Coming Soon")
-	})
+	blogTpl := views.GenerateTemplate("blog.gohtml")
+	s.Mux.Get("/blog", controllers.StaticHandler(blogTpl))
+
+	projectsTpl := views.GenerateTemplate("projects.gohtml")
+	s.Mux.Get("/projects", controllers.StaticHandler(projectsTpl))
 
 	// make sure to register cookies only for admin page for posting blog
 	// use gorilla/csrf to generate csrf token middleware

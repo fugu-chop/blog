@@ -8,6 +8,9 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+
+	"github.com/fugu-chop/blog/pkg/config"
+	"github.com/fugu-chop/blog/pkg/templates"
 )
 
 type Executer interface {
@@ -30,6 +33,11 @@ a html/template.Template type).
 */
 type Template struct {
 	htmlTpl TemplateCloner
+}
+
+func GenerateTemplate(patterns ...string) Template {
+	patterns = append(patterns, config.LayoutTemplate)
+	return Must(ParseFS(templates.FS, patterns...))
 }
 
 /*
