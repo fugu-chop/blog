@@ -35,9 +35,16 @@ type Template struct {
 	htmlTpl TemplateCloner
 }
 
+/*
+GenerateTemplate takes in a slice of strings which represent gohtml template files
+and calls various helper methods.
+
+It parses the validity of the template before returning a Template type (an invalid
+template will cause a panic).
+*/
 func GenerateTemplate(patterns ...string) Template {
 	patterns = append(patterns, config.LayoutTemplate)
-	return Must(ParseFS(templates.FS, patterns...))
+	return must(parseFS(templates.FS, patterns...))
 }
 
 /*
@@ -75,7 +82,7 @@ ParseFS attempts to open FileSystem and apply templates sequentially.
 Templates are passed to the `patterns` parameter and applied in the
 order they are passed. This enables use of templating within .gohtml templates.
 */
-func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
+func parseFS(fs fs.FS, patterns ...string) (Template, error) {
 	tpl, err := template.ParseFS(fs, patterns...)
 	if err != nil {
 		return Template{}, fmt.Errorf("parsing template: %w", err)
@@ -90,7 +97,7 @@ Must ensures that templates can be parsed before they are used.
 
 A function that parses a template should be passed to the `err` parameter.
 */
-func Must(t Template, err error) Template {
+func must(t Template, err error) Template {
 	if err != nil {
 		panic(err)
 	}

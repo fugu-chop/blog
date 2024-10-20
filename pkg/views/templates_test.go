@@ -15,7 +15,7 @@ import (
 )
 
 func TestExecute(t *testing.T) {
-	template := Must(ParseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
+	template := must(parseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
 
 	// Request to home page
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -72,16 +72,16 @@ func TestMust(t *testing.T) {
 			t.Parallel()
 
 			if tc.inputError == nil {
-				assert.NotPanics(t, func() { Must(Template{}, tc.inputError) })
+				assert.NotPanics(t, func() { must(Template{}, tc.inputError) })
 			} else {
-				assert.Panics(t, func() { Must(Template{}, tc.inputError) })
+				assert.Panics(t, func() { must(Template{}, tc.inputError) })
 			}
 		})
 	}
 }
 
 func TestParseFS(t *testing.T) {
-	tpl, err := ParseFS(templates.FS, "layout.gohtml", "home.gohtml")
+	tpl, err := parseFS(templates.FS, "layout.gohtml", "home.gohtml")
 
 	assert.Nil(t, err)
 	assert.NotNil(t, tpl.htmlTpl)
@@ -110,7 +110,7 @@ func TestParseFS_Errors(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			tpl, err := ParseFS(tc.fileSystem, tc.patterns...)
+			tpl, err := parseFS(tc.fileSystem, tc.patterns...)
 
 			assert.Nil(t, tpl.htmlTpl)
 			assert.NotNil(t, err)
