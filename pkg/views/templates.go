@@ -11,11 +11,21 @@ import (
 )
 
 /*
+TemplateCloner extracts the Clone() method on the html/template.Template type
+to an interface.
+*/
+type TemplateCloner interface {
+	Clone() (*template.Template, error)
+}
+
+/*
 Template is a type that encapsulates a *template.Template type and
-a method to write that template to a io.ResponseWriter.
+a method to write that template to a io.ResponseWriter. The htmlTpl
+field should implement the TemplateCloner interface (usually by passing in
+a html/template.Template type).
 */
 type Template struct {
-	htmlTpl *template.Template
+	htmlTpl TemplateCloner
 }
 
 /*
@@ -28,7 +38,7 @@ helps avoid concurrency issues where a template is being used across different w
 func (t *Template) Execute(w http.ResponseWriter, r *http.Request, data any) {
 	// Cloning ensures we don't end up sharing a template across goroutines
 	// This can avoid issues with CSRF tokens overwritten between different
-	/// requests as each request is a different goroutine
+	// requests as each request is a different goroutine
 	tpl, err := t.htmlTpl.Clone()
 	if err != nil {
 		log.Printf("cloning template: %v", err)
