@@ -44,7 +44,8 @@ It parses the validity of the template before returning a Template type (an inva
 template will cause a panic).
 */
 func GenerateTemplate(patterns ...string) Template {
-	patterns = append(patterns, config.LayoutTemplate)
+	inbuiltPatterns := []string{config.LayoutTemplate}
+	patterns = append(inbuiltPatterns, patterns...)
 	return must(parseFS(templates.FS, patterns...))
 }
 
@@ -84,10 +85,11 @@ Templates are passed to the `patterns` parameter and applied in the
 order they are passed. This enables use of templating within .gohtml templates.
 */
 func parseFS(fs fs.FS, patterns ...string) (Template, error) {
-	// Note that the html/template package does not include the
-	// path in a template name - we use the base filepath
-	// to fix this for nesting templates within folders
-	tpl := template.New(filepath.Base(patterns[len(patterns)-1]))
+	/*
+		The html/template package does not include the path in a template name
+		we use the base filepath to fix this for nesting templates within folders
+	*/
+	tpl := template.New(filepath.Base(patterns[0]))
 	tpl, err := tpl.ParseFS(fs, patterns...)
 	if err != nil {
 		return Template{}, fmt.Errorf("parsing template: %w", err)
