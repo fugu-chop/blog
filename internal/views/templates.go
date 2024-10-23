@@ -8,6 +8,10 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"path/filepath"
+
+	"github.com/fugu-chop/blog/internal/config"
+	"github.com/fugu-chop/blog/internal/templates"
 )
 
 type Executer interface {
@@ -30,6 +34,19 @@ a html/template.Template type).
 */
 type Template struct {
 	htmlTpl TemplateCloner
+}
+
+/*
+GenerateTemplate takes in an arbitrary number of strings which represent gohtml
+template files and calls various helper methods.
+
+It parses the validity of the template before returning a Template type (an invalid
+template will cause a panic).
+*/
+func GenerateTemplate(patterns ...string) Template {
+	inbuiltPatterns := []string{config.LayoutTemplate}
+	patterns = append(inbuiltPatterns, patterns...)
+	return must(parseFS(templates.FS, patterns...))
 }
 
 /*
@@ -67,8 +84,13 @@ ParseFS attempts to open FileSystem and apply templates sequentially.
 Templates are passed to the `patterns` parameter and applied in the
 order they are passed. This enables use of templating within .gohtml templates.
 */
-func ParseFS(fs fs.FS, patterns ...string) (Template, error) {
-	tpl, err := template.ParseFS(fs, patterns...)
+func parseFS(fs fs.FS, patterns ...string) (Template, error) {
+	/*
+		The html/template package does not include the path in a template name
+		we use the base filepath to fix this for nesting templates within folders
+	*/
+	tpl := template.New(filepath.Base(patterns[0]))
+	tpl, err := tpl.ParseFS(fs, patterns...)
 	if err != nil {
 		return Template{}, fmt.Errorf("parsing template: %w", err)
 	}
@@ -82,7 +104,7 @@ Must ensures that templates can be parsed before they are used.
 
 A function that parses a template should be passed to the `err` parameter.
 */
-func Must(t Template, err error) Template {
+func must(t Template, err error) Template {
 	if err != nil {
 		panic(err)
 	}

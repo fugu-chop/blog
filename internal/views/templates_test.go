@@ -8,16 +8,27 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/fugu-chop/blog/pkg/config"
-	"github.com/fugu-chop/blog/pkg/templates"
+	"github.com/fugu-chop/blog/internal/config"
+	"github.com/fugu-chop/blog/internal/templates"
 	"github.com/fugu-chop/blog/test/pkg/templatetest"
 	"github.com/stretchr/testify/assert"
 )
 
-// TODO: Write a test for Execute - you'll need to spin up a httptest server
+func TestGenerateTemplate(t *testing.T) {
+	assert.NotPanics(t, func() { GenerateTemplate("root/home.gohtml") })
+
+	template := GenerateTemplate("root/home.gohtml")
+
+	assert.NotNil(t, template)
+	assert.IsType(t, Template{}, template)
+}
+
+func TestGenerateTemplate_Error(t *testing.T) {
+	assert.Panics(t, func() { GenerateTemplate("non-existent-template.gohtml") })
+}
 
 func TestExecute(t *testing.T) {
-	template := Must(ParseFS(templates.FS, config.LayoutTemplate, "home.gohtml"))
+	template := must(parseFS(templates.FS, config.LayoutTemplate, "root/home.gohtml"))
 
 	// Request to home page
 	r := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -74,16 +85,16 @@ func TestMust(t *testing.T) {
 			t.Parallel()
 
 			if tc.inputError == nil {
-				assert.NotPanics(t, func() { Must(Template{}, tc.inputError) })
+				assert.NotPanics(t, func() { must(Template{}, tc.inputError) })
 			} else {
-				assert.Panics(t, func() { Must(Template{}, tc.inputError) })
+				assert.Panics(t, func() { must(Template{}, tc.inputError) })
 			}
 		})
 	}
 }
 
 func TestParseFS(t *testing.T) {
-	tpl, err := ParseFS(templates.FS, "layout.gohtml", "home.gohtml")
+	tpl, err := parseFS(templates.FS, "layout.gohtml", "root/home.gohtml")
 
 	assert.Nil(t, err)
 	assert.NotNil(t, tpl.htmlTpl)
@@ -112,7 +123,7 @@ func TestParseFS_Errors(t *testing.T) {
 
 		t.Run(tc.name, func(t *testing.T) {
 			t.Parallel()
-			tpl, err := ParseFS(tc.fileSystem, tc.patterns...)
+			tpl, err := parseFS(tc.fileSystem, tc.patterns...)
 
 			assert.Nil(t, tpl.htmlTpl)
 			assert.NotNil(t, err)

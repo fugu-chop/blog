@@ -3,11 +3,11 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/fugu-chop/blog/pkg/views"
+	"github.com/fugu-chop/blog/internal/views"
 )
 
 /*
-StaticHandler writes the data in a views.Template type to
+StaticHandler writes the data in a views.Executer interface type to
 an io.ResponseWriter interface.
 */
 func StaticHandler(tpl views.Executer) http.HandlerFunc {
