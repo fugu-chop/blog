@@ -1,0 +1,99 @@
+{{define "page"}}
+<h1>This Website</h1>
+
+<h2>Context</h2>
+<p>This website is my first Golang 'project'. You can check out the source code 
+  <a href="https://github.com/fugu-chop/blog" target="_blank" rel="noopener noreferrer">
+    here
+  </a>.
+</p>
+<p>The intention of this project is to spin up a Golang server with minimal 3rd party packages and deploy it to the web.</p>
+<p>Whilst I write Golang code in my day job, all of the deployment is abstracted away.</p>
+<p>My learning goals are to experience the nuances of spinning up a virtual server, setting up a domain, handling networking and deploying an app to production.</p>
+
+<h2>Implementation</h2>
+<h3>Cloud Provider</h3>
+<p>This project is my first real foray into deploying an app onto the web using a Cloud provider (I've chosen 
+  <a href="https://fly.io" target="_blank" rel="noopener noreferrer">fly.io</a>).
+</p>
+<p>After evaluating solutions from other providers (AWS, GCP, DigitalOcean), <code>fly.io</code> seems like the best choice from cost, simplicity and future feature perspective.</p>
+
+<h4>Why not AWS?</h4>
+<p>While AWS is very widely used, it seems like it has a bunch of different products that need to be set up and coordinated (i.e. there is just a lot of set up and coordination required).</p>
+<p>I had originally decided to use a Fargate task as a serverless setup for the app.</p>
+<p>However, there's a bunch of <em>stuff</em> and/or tradeoffs that needs to be made for the app:</p>
+<ul>
+  <li>I would need to use DynamoDB (noSQL) due to it's 'free' status.</li>
+  <ul>
+    <li>I prefer Postgres (relational) because it still suits a blog use case (see below) and is easier for me to work with. </li>
+    <li>Using AWS would require me to use a managed DB service (which is <em>very</em> expensive) or spin up a virtual machine that runs a Postgres docker image. Hassle.</li>
+  </ul>
+
+  <li>Just the sheer amount of stuff to manage/AWS ecosystem:</li>
+    <ul>
+      <li>I have to use an application load balancer and Route53 just to use a custom domain for the ECS cluster (people using Cloudflare seem to have lots of issues getting it all hooked up).</li>
+      <li>If going with the Fargate approach, docker images for Fargate tasks have to be stored in ECR (AFAICT)</li>
+      <li>AWS Certificate Manager for SSL/TLS certificates</li>
+    </ul>
+</ul>
+<p>Whilst almost all of these products would be free for my use case on the AWS free tier, having to use and 'synchronise' all these products creates monitoring and management hassle.</p>
+<p>In my (limited) experience, AWS documentation quality is inconsistent and hard to locate and read.</p>
+
+<h4>Why fly.io?</h4>
+<ol>
+  <li>Deployment is significantly easier. Everything is through the CLI and connecting VMs is just easy.</li>
+  <li>Documentation is well written and seems to cover things I would want to do.</li>
+  <li>Product offering. I need a virtual machine for my app and one for Postgres. fly.io offers this (the Postgres offering is not managed, but that is fine).</li>
+  <li>Still cheap! It should cost me about $7 a month (app will be in a US region, using a single Postgres node cluster).</li>
+</ol>
+
+<h3>Golang Server</h3>
+<p>As of October 2024, this website is just a Golang server that delivers some static templates via the 
+  <a href="https://pkg.go.dev/html/template" target="_blank" rel="noopener noreferrer">
+    <code>html/templates</code></a> package.
+</p>
+<p>It could very well just be a static site hosted on Github pages or S3.</p>
+<p>Nonetheless, writing up Golang code for a server (using 
+<a href="https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/"
+  target="_blank" 
+  rel="noopener noreferrer">
+  Mat Ryer
+</a>'s excellent blog post as inspiration) has been fun and made me look into a lot of the code in the <code>net/http</code> Golang package.</p>
+
+<p>My original intention was to use as few packages outside of the standard Go library as possible.</p>
+<p>I have broadly followed this, though there is one notable exception:</p>
+
+<h4>Routing</h4>
+<p>After evaluating the 
+<a href="https://go.dev/blog/routing-enhancements"
+  target="_blank" 
+  rel="noopener noreferrer">
+routing updates</a> 
+in the <code>net/http</code> package in Go 1.22, I decided using an external library would be a better fit/less tedious.</p>
+
+<p>While the addition of HTTP verbs and extraction of parts of the path are wonderful, applying middleware is still a pain.</p>
+<p>AFAICT I still have to manually apply middleware to each and every `http.Handler`. That is a lot of error-prone repetition.</p>
+
+<p>I've settled on using 
+<a href="https://github.com/go-chi/chi"
+  target="_blank" 
+  rel="noopener noreferrer"
+><code>chi</code></a>
+which offers a much more granular way to apply middleware to <code>http.Handler</code>s.</p>
+<p>This will be useful for applying authorisation checks when I implement a blog (see below).</p>
+
+<h4>Blog</h4>
+<p>My intention going forward is to create a blog.</p>
+<p>Based on my choice of cloud provider, this will involve:</p>
+<ul>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>
+
+<h2>Learnings</h2>
+<!-- TODO -->
+
+<h2>Future Enhancements</h2>
+
+{{end}}
