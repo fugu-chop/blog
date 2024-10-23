@@ -7,11 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fugu-chop/blog/internal/controllers"
-	"github.com/fugu-chop/blog/internal/views"
-
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 )
 
 /*
@@ -77,36 +73,4 @@ func (s *Server) Shutdown(ctx context.Context) error {
 	log.Printf("Shutting down server at address %s", s.addr)
 
 	return s.server.Shutdown(ctx)
-}
-
-/*
-mount registers various routes on the *chi.Mux router. It parses various templates
-that are embedded in the binary via fs.FS and uses HandlerFuncs provided in the
-`controllers` package to write these to io.ResponseWriter.
-*/
-func (s *Server) mount() {
-	log.Print("registering routes on server")
-
-	s.Mux.Use(middleware.RequestID)
-	s.Mux.Use(middleware.RealIP)
-	s.Mux.Use(middleware.Logger)
-	s.Mux.Use(middleware.Recoverer)
-
-	// Ensure template can be parsed before attempting to use
-	homeTpl := views.GenerateTemplate("root/home.gohtml")
-	s.Mux.Get("/", controllers.StaticHandler(homeTpl))
-
-	aboutTpl := views.GenerateTemplate("root/about.gohtml")
-	s.Mux.Get("/about", controllers.StaticHandler(aboutTpl))
-
-	blogTpl := views.GenerateTemplate("root/blog.gohtml")
-	s.Mux.Get("/blog", controllers.StaticHandler(blogTpl))
-
-	projectsTpl := views.GenerateTemplate("root/projects.gohtml")
-	s.Mux.Get("/projects", controllers.StaticHandler(projectsTpl))
-
-	// make sure to register cookies only for admin page for posting blog
-	// use gorilla/csrf to generate csrf token middleware
-	// Add sessions to headers
-	// Store user in context to minimise db queries
 }
